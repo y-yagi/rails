@@ -186,7 +186,11 @@ module Rails
       end
 
       def comment_if(value)
-        options[value] ? '# ' : ''
+        if value.is_a?(Array)
+          value.any? { |v| options[v] } ? '# ' : ''
+        else
+          options[value] ? '# ' : ''
+        end
       end
 
       def keeps?
@@ -351,7 +355,7 @@ module Rails
       end
 
       def cable_gemfile_entry
-        return [] if options[:skip_action_cable]
+        return [] if options[:skip_action_cable] || options[:api]
         comment = 'Use Redis adapter to run Action Cable in production'
         gems = []
         gems << GemfileEntry.new("redis", '~> 3.0', comment, {}, true)

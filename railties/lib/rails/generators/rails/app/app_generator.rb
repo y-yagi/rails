@@ -282,6 +282,13 @@ module Rails
         end
       end
 
+      def delete_action_cable_files_if_api_option
+        if options[:api]
+          remove_file 'config/cable.yml'
+          remove_dir 'app/channels'
+        end
+      end
+
       def delete_js_folder_skipping_javascript
         if options[:skip_javascript]
           remove_dir 'app/assets/javascripts'

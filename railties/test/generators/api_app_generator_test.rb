@@ -38,11 +38,13 @@ class ApiAppGeneratorTest < Rails::Generators::TestCase
       assert_no_match(/gem 'jquery-rails'/, content)
       assert_no_match(/gem 'sass-rails'/, content)
       assert_no_match(/gem 'web-console'/, content)
+      assert_no_match(/gem 'redis'/, content)
       assert_match(/# gem 'jbuilder'/, content)
     end
 
     assert_file "config/application.rb" do |content|
       assert_match(/config.api_only = true/, content)
+      assert_match(/#\s+require\s+["']action_cable\/engine["']/, content)
     end
 
     assert_file "config/initializers/cors.rb"
@@ -50,16 +52,6 @@ class ApiAppGeneratorTest < Rails::Generators::TestCase
     assert_file "config/initializers/wrap_parameters.rb"
 
     assert_file "app/controllers/application_controller.rb", /ActionController::API/
-  end
-
-  def test_generator_if_skip_action_cable_is_given
-    run_generator [destination_root, "--skip-action-cable"]
-    assert_file "config/application.rb", /#\s+require\s+["']action_cable\/engine["']/
-    assert_no_file "config/cable.yml"
-    assert_no_file "app/channels"
-    assert_file "Gemfile" do |content|
-      assert_no_match(/redis/, content)
-    end
   end
 
   private
@@ -95,6 +87,8 @@ class ApiAppGeneratorTest < Rails::Generators::TestCase
     %w(app/assets
        app/helpers
        app/views
+       app/channels
+       config/cable.yml
        config/initializers/assets.rb
        config/initializers/cookies_serializer.rb
        config/initializers/session_store.rb
