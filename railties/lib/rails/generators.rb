@@ -116,6 +116,10 @@ module Rails
         helper: false,
         template_engine: nil
       )
+
+      if ARGV.first == 'mailer'
+        options[:rails].merge!(template_engine: :erb)
+      end
     end
 
     # Remove the color from output.
