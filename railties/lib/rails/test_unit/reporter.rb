@@ -20,8 +20,10 @@ module Rails
         io.puts
         io.puts format_failures(result).map { |line| color_output(line, by: result) }
         io.puts
-        io.puts format_rerun_snippet(result)
-        io.puts
+        unless result.skipped?
+          io.puts format_rerun_snippet(result)
+          io.puts
+        end
       end
 
       if fail_fast? && result.failure && !result.skipped?
@@ -38,7 +40,7 @@ module Rails
     end
 
     def aggregated_results # :nodoc:
-      filtered_results.map { |result| format_rerun_snippet(result) }.join "\n"
+      filtered_results.reject(&:skipped?).map { |result| format_rerun_snippet(result) }.join "\n"
     end
 
     def filtered_results

@@ -37,14 +37,6 @@ class TestUnitReporterTest < ActiveSupport::TestCase
     assert_rerun_snippet_count 0
   end
 
-  test "prints rerun snippet for skipped tests if run in verbose mode" do
-    verbose = Rails::TestUnitReporter.new @output, verbose: true
-    verbose.record(skipped_test)
-    verbose.report
-
-    assert_rerun_snippet_count 1
-  end
-
   test "allows to customize the executable in the rerun snippet" do
     original_executable = Rails::TestUnitReporter.executable
     begin
@@ -79,7 +71,7 @@ class TestUnitReporterTest < ActiveSupport::TestCase
     verbose.record(skipped_test)
     verbose.report
 
-    expect = %r{\ATestUnitReporterTest::ExampleTest#woot = 10\.00 s = S\n\n\nSkipped:\nTestUnitReporterTest::ExampleTest#woot \[[^\]]+\]:\nskipchurches, misstemples\n\nbin/rails test test/test_unit/reporter_test.rb:\d+\n\n\z}
+    expect = %r{\ATestUnitReporterTest::ExampleTest#woot = 10\.00 s = S\n\n\nSkipped:\nTestUnitReporterTest::ExampleTest#woot \[[^\]]+\]:\nskipchurches, misstemples\n\n\z}
     assert_match expect, @output.string
   end
 
