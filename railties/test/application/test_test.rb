@@ -81,9 +81,6 @@ module ApplicationTests
           end
         end
       RUBY
-      app_file 'db/schema.rb', ''
-
-      assert_unsuccessful_run "models/user_test.rb", "Migrations are pending"
 
       app_file 'db/schema.rb', <<-RUBY
         ActiveRecord::Schema.define(version: #{version}) do
@@ -119,12 +116,9 @@ module ApplicationTests
         end
       RUBY
 
-      app_file 'db/structure.sql', ''
       app_file 'config/initializers/enable_sql_schema_format.rb', <<-RUBY
         Rails.application.config.active_record.schema_format = :sql
       RUBY
-
-      assert_unsuccessful_run "models/user_test.rb", "Migrations are pending"
 
       app_file 'db/structure.sql', <<-SQL
         CREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL);
@@ -229,10 +223,6 @@ module ApplicationTests
           end
         end
       RUBY
-
-      assert_successful_test_run "models/user_test.rb"
-
-      Dir.chdir(app_path) { `bin/rails db:test:prepare` }
 
       assert_unsuccessful_run "models/user_test.rb", <<-ASSERTION
 Expected: ["id", "name"]

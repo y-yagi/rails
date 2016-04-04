@@ -271,6 +271,14 @@ module ActiveRecord
         end
       end
 
+      def schema_file_signature
+        Digest::MD5.file(schema_file).hexdigest
+      end
+
+      def record_schema_file_signature
+        ActiveRecord::InternalMetadata[:schema_file_signature] = schema_file_signature
+      end
+
       private
 
       def class_for_adapter(adapter)

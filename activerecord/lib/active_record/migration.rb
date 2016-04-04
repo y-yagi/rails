@@ -1045,7 +1045,8 @@ module ActiveRecord
       end
 
       def needs_migration?(connection = Base.connection)
-        (migrations(migrations_paths).collect(&:version) - get_all_versions(connection)).size > 0
+        return true unless ActiveRecord::InternalMetadata.table_exists?
+        ActiveRecord::InternalMetadata[:schema_file_signature] != ActiveRecord::Tasks::DatabaseTasks.schema_file_signature
       end
 
       def any_migrations?
