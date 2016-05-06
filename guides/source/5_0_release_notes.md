@@ -297,6 +297,10 @@ Please refer to the [Changelog][action-pack] for detailed changes.
     ([Pull Request](https://github.com/rails/rails/pull/23827))
 
 
+*   Add `ActionController#helpers` to get access to the view context
+    at the controller level.
+    ([Pull Request](https://github.com/rails/rails/pull/24866))
+
 Action View
 -------------
 
@@ -489,6 +493,10 @@ Please refer to the [Changelog][active-record] for detailed changes.
 *   Deprecated `{insert|update|delete}_sql` in `DatabaseStatements`.
     Use the `{insert|update|delete}` public methods instead.
     ([Pull Request](https://github.com/rails/rails/pull/23086))
+
+*   Deprecated `use_transactional_fixtures` in favor of
+    `use_transactional_tests` for more clarity.
+    ([Pull Request](https://github.com/rails/rails/pull/19282))
 
 ### Notable changes
 
