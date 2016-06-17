@@ -326,19 +326,18 @@ module ActionDispatch
         def process(method, path, params: nil, headers: nil, env: nil, xhr: false, as: nil)
           request_encoder = RequestEncoder.encoder(as)
 
+          location = URI.parse(path)
           if path =~ %r{://}
-            location = URI.parse(path)
             https! URI::HTTPS === location if location.scheme
             if url_host = location.host
               default = Rack::Request::DEFAULT_PORTS[location.scheme]
               url_host += ":#{location.port}" if default != location.port
               host! url_host
             end
-            path = request_encoder.append_format_to location.path
-            path = location.query ? "#{path}?#{location.query}" : path
-          else
-            path = request_encoder.append_format_to path
           end
+
+          path = request_encoder.append_format_to location.path
+          path = location.query ? "#{path}?#{location.query}" : path
 
           hostname, port = host.split(':')
 
