@@ -2,9 +2,11 @@ require "abstract_unit"
 require "env_helpers"
 require "rails/command"
 require "rails/commands/server/server_command"
+require "active_support/testing/method_call_assertions"
 
 class Rails::ServerTest < ActiveSupport::TestCase
   include EnvHelpers
+  include ActiveSupport::Testing::MethodCallAssertions
 
   def test_environment_with_server_option
     args    = ["thin", "-e", "production"]
@@ -139,5 +141,17 @@ class Rails::ServerTest < ActiveSupport::TestCase
     assert_equal expected, server.default_options[:restart_cmd]
   ensure
     ARGV.replace original_args
+  end
+
+  def test_invoke_with_options
+    Rails::Command::Actions.const_set("APP_PATH", "rails/all")
+
+    stub_any_instance(Rails::Server) do |instance|
+      assert_called_with(instance, :start) do
+        Rails::Command.invoke(:server, ["-p", "4567"])
+      end
+    end
+  ensure
+    Rails::Command::Actions.send(:remove_const, "APP_PATH")
   end
 end

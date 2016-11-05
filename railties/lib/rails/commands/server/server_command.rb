@@ -140,6 +140,11 @@ module Rails
 
   module Command
     class ServerCommand < Base # :nodoc:
+      def initialize(*)
+        super
+        @args = []
+      end
+
       def help
         puts Rails::Server::Options.new.option_parser(Hash.new)
       end
