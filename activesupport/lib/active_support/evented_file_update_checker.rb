@@ -33,7 +33,7 @@ module ActiveSupport
   #     # => "changed"
   #
   class EventedFileUpdateChecker #:nodoc: all
-    def initialize(files, dirs = {}, &block)
+    def initialize(files, dirs = {}, force: false, &block)
       unless block
         raise ArgumentError, "A block is required to initialize an EventedFileUpdateChecker"
       end
@@ -51,6 +51,7 @@ module ActiveSupport
       @lcsp       = @ph.longest_common_subpath(@dirs.keys)
       @pid        = Process.pid
       @boot_mutex = Mutex.new
+      @force      = force
 
       if (@dtw = directories_to_watch).any?
         # Loading listen triggers warnings. These are originated by a legit
@@ -98,7 +99,9 @@ module ActiveSupport
 
       def changed(modified, added, removed)
         unless updated?
-          @updated.make_true if (modified + added + removed).any? { |f| watching?(f) }
+          if (modified + added + removed).any? { |f| watching?(f) }
+            @force ? execute : @updated.make_true
+          end
         end
       end
 
