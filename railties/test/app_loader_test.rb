@@ -53,7 +53,10 @@ class AppLoaderTest < ActiveSupport::TestCase
       test "is in a Rails application if #{exe} exists and contains #{keyword}" do
         write exe, keyword
 
-        loader.exec_app
+        exec_app
+        assert_deprecated do
+          loader.exec_app
+        end
 
         expects_exec exe
       end
@@ -87,5 +90,10 @@ class AppLoaderTest < ActiveSupport::TestCase
   teardown do
     Dir.chdir(@cwd)
     FileUtils.rm_rf(@tmp)
+  end
+
+  def exec_app
+    require "byebug"
+    byebug
   end
 end

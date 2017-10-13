@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "pathname"
+require "active_support/deprecation"
+require "active_support/core_ext/string/filters"
 require_relative "version"
 
 module Rails
@@ -47,6 +49,12 @@ EOS
 
       loop do
         if exe = find_executable
+          if exe.end_with?("script/rails")
+            ActiveSupport::Deprecation.warn(<<-MSG.squish)
+              "script/rails" is deprecated and will be removed in Rails 6.0.
+            MSG
+          end
+
           contents = File.read(exe)
 
           if contents =~ /(APP|ENGINE)_PATH/
