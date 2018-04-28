@@ -191,6 +191,17 @@ module Rails
           ActiveSupport::Dependencies.unhook!
         end
       end
+
+      initializer :set_server_restart_watcher do |app|
+        reloader = config.file_watcher.new(config.paths["config/initializers"].existent) do
+          system("bin/rails restart")
+        end
+        reloaders << reloader
+
+        app.reloader.to_run(prepend: true) do
+          reloader.execute_if_updated
+        end
+      end
     end
   end
 end
