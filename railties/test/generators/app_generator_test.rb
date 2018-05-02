@@ -3,6 +3,7 @@
 require "generators/generators_test_helper"
 require "rails/generators/rails/app/app_generator"
 require "generators/shared_generator_tests"
+require "env_helpers"
 
 DEFAULT_APP_FILES = %w(
   .gitignore
@@ -100,6 +101,7 @@ class AppGeneratorTest < Rails::Generators::TestCase
 
   # brings setup, teardown, and some tests
   include SharedGeneratorTests
+  include EnvHelpers
 
   def default_files
     ::DEFAULT_APP_FILES
@@ -298,11 +300,9 @@ class AppGeneratorTest < Rails::Generators::TestCase
 
   def test_app_update_does_not_generate_action_cable_contents_when_skip_action_cable_is_given
     app_root = File.join(destination_root, "myapp")
-    run_generator [app_root, "--skip-action-cable"]
+    run_generator [app_root, "--skip-action-cable", "--dev"]
 
-    FileUtils.cd(app_root) do
-      quietly { system("bin/rails app:update") }
-    end
+    execute_app_update(app_root)
 
     assert_no_file "#{app_root}/config/cable.yml"
     assert_file "#{app_root}/config/environments/production.rb" do |content|
@@ -323,11 +323,9 @@ class AppGeneratorTest < Rails::Generators::TestCase
 
   def test_app_update_does_not_generate_active_storage_contents_when_skip_active_storage_is_given
     app_root = File.join(destination_root, "myapp")
-    run_generator [app_root, "--skip-active-storage"]
+    run_generator [app_root, "--skip-active-storage", "--dev"]
 
-    FileUtils.cd(app_root) do
-      quietly { system("bin/rails app:update") }
-    end
+    execute_app_update(app_root)
 
     assert_file "#{app_root}/config/environments/development.rb" do |content|
       assert_no_match(/config\.active_storage/, content)
@@ -346,11 +344,9 @@ class AppGeneratorTest < Rails::Generators::TestCase
 
   def test_app_update_does_not_generate_active_storage_contents_when_skip_active_record_is_given
     app_root = File.join(destination_root, "myapp")
-    run_generator [app_root, "--skip-active-record"]
+    run_generator [app_root, "--skip-active-record", "--dev"]
 
-    FileUtils.cd(app_root) do
-      quietly { system("bin/rails app:update") }
-    end
+    execute_app_update(app_root)
 
     assert_file "#{app_root}/config/environments/development.rb" do |content|
       assert_no_match(/config\.active_storage/, content)
@@ -374,7 +370,7 @@ class AppGeneratorTest < Rails::Generators::TestCase
       config = "config/application.rb"
       content = File.read(config)
       File.write(config, content.gsub(/config\.load_defaults #{Rails::VERSION::STRING.to_f}/, "config.load_defaults 5.1"))
-      quietly { system("bin/rails app:update") }
+      execute_app_update(".")
     end
 
     assert_file "config/application.rb", /\s+config\.load_defaults 5\.1/
@@ -386,7 +382,8 @@ class AppGeneratorTest < Rails::Generators::TestCase
   end
 
   def test_gemfile_has_no_whitespace_errors
-    run_generator
+    run_generator ["--dev"]
+
     absolute = File.expand_path("Gemfile", destination_root)
     File.open(absolute, "r") do |f|
       f.each_line do |line|
@@ -992,6 +989,14 @@ class AppGeneratorTest < Rails::Generators::TestCase
 
       generator.stub :bundle_command, command_check do
         quietly { generator.invoke_all }
+      end
+    end
+
+    def execute_app_update(app_root)
+      switch_env "BUNDLE_GEMFILE", nil do
+        FileUtils.cd(app_root) do
+          quietly { system("bin/rails app:update") }
+        end
       end
     end
 end
