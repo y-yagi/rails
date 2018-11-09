@@ -290,7 +290,7 @@ $ bundle exec rake db:drop
 
 NOTE: Using the Rake task to create the test databases ensures they have the correct character set and collation.
 
-NOTE: You'll see the following warning (or localized warning) during activating HStore extension in PostgreSQL 9.1.x or earlier: "WARNING: => is deprecated as an operator".
+NOTE: You'll see the following warning (or localized warning) during activating HStore extension in PostgreSQL 9.3.x or earlier: "WARNING: => is deprecated as an operator".
 
 If you're using another database, check the file `activerecord/test/config.yml` or `activerecord/test/config.example.yml` for default connection information. You can edit `activerecord/test/config.yml` to provide different credentials on your machine if you must, but obviously you should not push any such changes back to Rails.
 

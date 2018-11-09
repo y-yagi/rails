@@ -172,7 +172,7 @@ module ActiveRecord
       end
 
       def supports_json?
-        postgresql_version >= 90200
+        true
       end
 
       def supports_comments?
@@ -319,16 +319,15 @@ module ActiveRecord
       end
 
       def supports_ranges?
-        # Range datatypes weren't introduced until PostgreSQL 9.2
-        postgresql_version >= 90200
+        true
       end
 
       def supports_materialized_views?
-        postgresql_version >= 90300
+        true
       end
 
       def supports_foreign_tables?
-        postgresql_version >= 90300
+        true
       end
 
       def supports_pgcrypto_uuid?
@@ -412,8 +411,8 @@ module ActiveRecord
 
       private
         def check_version
-          if postgresql_version < 90100
-            raise "Your version of PostgreSQL (#{postgresql_version}) is too old. Active Record supports PostgreSQL >= 9.1."
+          if postgresql_version < 90300
+            raise "Your version of PostgreSQL (#{postgresql_version}) is too old. Active Record supports PostgreSQL >= 9.3."
           end
         end
 

@@ -1,3 +1,7 @@
+*   Bump minimum PostgreSQL version to 9.3.
+
+    *Yuji Yaginuma*
+
 *   Add an `:if_not_exists` option to `create_table`.
 
     Example:
