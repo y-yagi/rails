@@ -8,7 +8,7 @@ task :package
 
 Rake::TestTask.new do |t|
   t.libs << "test"
-  t.pattern = "test/**/*_test.rb"
+  t.test_files = FileList["test/**/*_test.rb"].exclude("test/dummy/node_modules/**/*")
   t.verbose = true
 end
 
