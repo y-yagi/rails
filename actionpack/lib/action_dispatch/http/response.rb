@@ -242,9 +242,8 @@ module ActionDispatch # :nodoc:
       set_content_type new_header_info.mime_type, charset
     end
 
-    # Content type of response.
-    # It returns just MIME type and does NOT contain charset part.
-    def content_type
+    # Media type of response.
+    def media_type
       parsed_content_type_header.mime_type
     end
 
@@ -458,7 +457,7 @@ module ActionDispatch # :nodoc:
     end
 
     def assign_default_content_type_and_charset!
-      return if content_type
+      return if media_type
 
       ct = parsed_content_type_header
       set_content_type(ct.mime_type || Mime[:html].to_s,
