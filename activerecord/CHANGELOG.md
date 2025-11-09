@@ -1,3 +1,7 @@
+*   Make structured events for Active Record work
+
+    *Yuji Yaginuma*
+
 *   Fix `eager_load` when loading `has_many` assocations with composite primary keys.
 
     This would result in some records being loaded multiple times.
